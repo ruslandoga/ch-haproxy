@@ -1,0 +1,74 @@
+<clickhouse>
+  <logger>
+	<level>debug</level>
+  </logger>
+
+  <http_port>8123</http_port>
+  <tcp_port>9000</tcp_port>
+  <!-- <mysql_port>9004</mysql_port> -->
+
+  <path>./</path>
+
+  <mlock_executable>true</mlock_executable>
+
+  <timezone>UTC</timezone>
+
+  <users>
+    <default>
+      <password/>
+
+      <networks>
+        <ip>::/0</ip>
+      </networks>
+
+      <profile>default</profile>
+      <quota>default</quota>
+      <access_management>1</access_management>
+    </default>
+  </users>
+
+  <quotas>
+    <default/>
+  </quotas>
+
+  <profiles>
+	  <default>
+      <allow_experimental_object_type>1</allow_experimental_object_type>
+	  </default>
+  </profiles>
+
+  <!-- Query log. Used only for queries with setting log_queries = 1. -->
+  <query_log>
+    <!-- What table to insert data. If table is not exist, it will be created.
+          When query log structure is changed after system update,
+          then old table will be renamed and new table will be created automatically.
+    -->
+    <database>system</database>
+    <table>query_log</table>
+    <!--
+        PARTITION BY expr: https://clickhouse.com/docs/en/table_engines/mergetree-family/custom_partitioning_key/
+        Example:
+            event_date
+            toMonday(event_date)
+            toYYYYMM(event_date)
+            toStartOfHour(event_time)
+    -->
+    <partition_by>toYYYYMM(event_date)</partition_by>
+    <!--
+        Table TTL specification: https://clickhouse.com/docs/en/engines/table-engines/mergetree-family/mergetree/#mergetree-table-ttl
+        Example:
+            event_date + INTERVAL 1 WEEK
+            event_date + INTERVAL 7 DAY DELETE
+            event_date + INTERVAL 2 WEEK TO DISK 'bbb'
+
+    <ttl>event_date + INTERVAL 30 DAY DELETE</ttl>
+    -->
+
+    <!-- Instead of partition_by, you can provide full engine expression (starting with ENGINE = ) with parameters,
+          Example: <engine>ENGINE = MergeTree PARTITION BY toYYYYMM(event_date) ORDER BY (event_date, event_time) SETTINGS index_granularity = 1024</engine>
+      -->
+
+    <!-- Interval of flushing data. -->
+    <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+  </query_log>
+</clickhouse>
