@@ -3,26 +3,6 @@ services:
   clickhouse1:
     image: clickhouse/clickhouse-server:22.9-alpine
     restart: always
-    volumes:
-      - ./clickhouse-config.xml:/etc/clickhouse-server/config.xml
-    ulimits:
-      nofile:
-        soft: 262144
-        hard: 262144
-  clickhouse2:
-    image: clickhouse/clickhouse-server:22.9-alpine
-    restart: always
-    volumes:
-      - ./clickhouse-config.xml:/etc/clickhouse-server/config.xml
-    ulimits:
-      nofile:
-        soft: 262144
-        hard: 262144
-  clickhouse3:
-    image: clickhouse/clickhouse-server:22.9-alpine
-    restart: always
-    volumes:
-      - ./clickhouse-config.xml:/etc/clickhouse-server/config.xml
     ulimits:
       nofile:
         soft: 262144
@@ -34,4 +14,4 @@ services:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     ports:
       - 8080:8080
-      - 8404:8404
+      - 8405:8405
